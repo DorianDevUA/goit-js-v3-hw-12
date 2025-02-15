@@ -1,0 +1,28 @@
+/**
+  |============================
+  | include css partials with
+  | default @import url()
+  |============================
+*/
+/* Common styles */
+@import url('./reset.css');
+@import url('./common.css');
+@import url('./container.css');
+@import url('./visually-hidden.css');
+@import url('./custom-button.css');
+/* @import url('./animations.css'); */
+
+/* Pages style */
+/* @import url('./main.css'); */
+/* @import url('./page1.css'); */
+/* @import url('./page2.css'); */
+
+/* Sections style */
+@import url('./gallery-search.css');
+@import url('./gallery.css');
+
+/* @import url('./header.css'); */
+/* @import url('./back-link.css'); */
+/* @import url('./vite-promo.css'); */
+/* @import url('./badges.css'); */
+/* @import url('./footer.css'); */

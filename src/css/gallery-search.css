@@ -1,0 +1,17 @@
+.gallery-search-form {
+  display: flex;
+  gap: 8px;
+}
+
+.gallery-search-input {
+  width: 272px;
+  height: 40px;
+
+  padding-top: 8px;
+  padding-right: 16px;
+  padding-bottom: 8px;
+  padding-left: 16px;
+
+  border: 1px solid #808080;
+  border-radius: 4px;
+}
