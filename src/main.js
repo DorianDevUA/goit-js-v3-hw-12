@@ -1,50 +1,44 @@
 import './css/style.css';
-import getRefs from './js/getRefs';
 import CustomButton from './js/components/custom-button';
 import PixabayApiService from './js/pixabay-api';
 import SimpleLightboxServise from './js/utils/simple-lightbox';
-import izitoastApi from './js/utils/iziToast-api';
-import {
-  appendGalleryItems,
-  clearGalleryContainer,
-} from './js/render-functions';
+import IziToastApiService from './js/utils/iziToast-api';
+import { appendGalleryItems, clearGallery } from './js/render-functions';
+import CustomLoader from './js/components/custom-loader';
 
-const refs = getRefs();
+const refs = {
+  searchForm: document.querySelector('.js-gallery-search-form'),
+  galleryObserverGuard: document.querySelector('.js-guard-gallery'),
+};
 
-const observer = new IntersectionObserver(onLoadMoreObserver, {
+const messages = {
+  badRequest: 'Введіть запит у поле для пошуку!',
+  notFound: 'Нічого не знайдено. Спробуйте щось інше!',
+  endOfSearch: 'Вибачте, але ви досягли кінця результатів пошуку',
+};
+
+const pixabayApi = new PixabayApiService({ limit: 9 });
+const iziToastApi = new IziToastApiService();
+const imageLightbox = new SimpleLightboxServise();
+const loader = new CustomLoader({ selector: '.js-loader', hidden: true });
+
+const observer = new IntersectionObserver(onLoadMore, {
   root: null,
-  rootMargin: '300px',
+  rootMargin: '500px',
   // threshold: 1.0,
 });
 
-function onLoadMoreObserver(entries, observer) {
-  console.log('entries:', entries);
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      onLoadMore();
-      console.log('call observer');
-    }
-  });
-}
+const obsTarget = refs.galleryObserverGuard;
 
-const pixabayApi = new PixabayApiService();
-const imageLightbox = new SimpleLightboxServise();
 const gallerySearchBtn = new CustomButton({
   selector: '.js-gallery-search-btn',
   enabledLabel: 'Знайти',
   disabledLabel: 'Пошук',
+  hidden: false,
 });
-const loadMoreBtn = new CustomButton({
-  selector: '.js-load-more-btn',
-  enabledLabel: 'Показати ще',
-  disabledLabel: 'Завантаження',
-  hidden: true,
-});
-
 gallerySearchBtn.enable();
 
 refs.searchForm.addEventListener('submit', onSearch);
-refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
 async function onSearch(evt) {
   evt.preventDefault();
@@ -53,63 +47,55 @@ async function onSearch(evt) {
   const searchQuery = form.elements.query.value.trim();
 
   if (!searchQuery) {
-    izitoastApi.showWarningMsg(izitoastApi.MESSAGES.BAD_REQUEST);
+    iziToastApi.showWarningMsg(messages.badRequest);
     return;
   }
 
+  clearGallery();
+  pixabayApi.reset();
+  observer.unobserve(obsTarget);
+  gallerySearchBtn.disable();
+  loader.show();
   pixabayApi.searchQuery = searchQuery;
-  resetGallery();
 
-  try {
-    await fillGallery();
+  const images = await pixabayApi.fetchImages();
+
+  if (images.length) {
+    appendGalleryItems(images);
     imageLightbox.initialize();
-    observer.observe(refs.galleryGuard);
-  } catch (error) {
-    console.log(error);
+
+    if (!pixabayApi.isLastPage) {
+      observer.observe(obsTarget);
+    } else {
+      iziToastApi.showInfoMsg(messages.endOfSearch);
+    }
+  } else {
+    iziToastApi.showErrorMsg(messages.notFound);
   }
 
+  loader.hide();
   gallerySearchBtn.enable();
+
   form.reset();
 }
 
-async function onLoadMore() {
-  try {
-    await fillGallery();
-    imageLightbox.refresh();
-  } catch (error) {
-    console.log(error);
-  }
-}
+function onLoadMore(entries) {
+  entries.forEach(async entry => {
+    if (entry.isIntersecting) {
+      observer.unobserve(obsTarget);
+      loader.show();
 
-async function fillGallery() {
-  loadMoreBtn.disable();
-  console.log('call fillGullery');
+      const images = await pixabayApi.fetchImages();
+      appendGalleryItems(images);
 
-  const images = await pixabayApi.fetchImages();
-  const imagesExist = Boolean(images.length);
+      imageLightbox.refresh();
+      loader.hide();
 
-  if (!imagesExist) {
-    izitoastApi.showErrorMsg(izitoastApi.MESSAGES.NOT_FOUND);
-    return izitoastApi.MESSAGES.NOT_FOUND;
-  }
-
-  appendGalleryItems(images);
-
-  if (pixabayApi.isLastPage) {
-    izitoastApi.showInfoMsg(izitoastApi.MESSAGES.END_OF_SEARCH);
-    console.log('перед видаленням');
-    observer.unobserve(refs.galleryGuard);
-    loadMoreBtn.hide();
-  } else {
-    loadMoreBtn.show();
-    loadMoreBtn.enable();
-  }
-}
-
-function resetGallery() {
-  pixabayApi.resetPage();
-  pixabayApi.isLastPage = false;
-  gallerySearchBtn.disable();
-  loadMoreBtn.hide();
-  clearGalleryContainer();
+      if (!pixabayApi.isLastPage) {
+        observer.observe(obsTarget);
+      } else {
+        iziToastApi.showInfoMsg(messages.endOfSearch);
+      }
+    }
+  });
 }

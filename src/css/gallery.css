@@ -5,6 +5,10 @@
   gap: 24px;
 }
 
+.gallery-item {
+  min-height: 200px;
+}
+
 .card {
   position: relative;
   width: 360px;

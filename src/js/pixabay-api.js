@@ -1,20 +1,22 @@
 import axios from 'axios';
 
+const API_KEY = '43520057-d4110ce2722b475a1deefaa82';
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 axios.defaults.headers.common['Content-Type'] = 'application/json';
-// const BASE_URL = 'https://pixabay.com/api/';
-const API_KEY = '43520057-d4110ce2722b475a1deefaa82';
 
 export default class PixabayApiService {
   #query;
   #page;
+  #limit;
+  #totalPages;
   #isLastPage;
 
-  constructor() {
+  constructor({ limit = 20 } = {}) {
     this.#query = '';
     this.#page = 1;
+    this.#limit = limit;
+    this.#totalPages = 1;
     this.#isLastPage = false;
-    this.limit = 50;
   }
 
   get searchQuery() {
@@ -25,28 +27,23 @@ export default class PixabayApiService {
     this.#query = newQuery.trim().toLowerCase();
   }
 
+  get totalPages() {
+    return this.#totalPages;
+  }
+
   get isLastPage() {
     return this.#isLastPage;
-  }
-
-  set isLastPage(value) {
-    this.#isLastPage = value;
-  }
-
-  get galleryPage() {
-    return this.#page;
-  }
-
-  set galleryPage(newPage) {
-    this.#page = newPage;
   }
 
   incrementPage() {
     this.#page += 1;
   }
 
-  resetPage() {
+  reset() {
+    this.#query = '';
     this.#page = 1;
+    this.#totalPages = 1;
+    this.#isLastPage = false;
   }
 
   async fetchImages() {
@@ -56,59 +53,22 @@ export default class PixabayApiService {
         key: API_KEY,
         q: this.#query,
         page: this.#page,
-        per_page: this.limit,
+        per_page: this.#limit,
         image_type: 'photo',
         orientation: 'horizontal',
         safesearch: true,
       },
     };
 
-    return axios('', config).then(({ data }) => {
-      const totalPages = Math.ceil(data.totalHits / this.limit);
-      this.#isLastPage = this.#page >= totalPages;
-      console.log('Це остання сторінка?:', this.#isLastPage);
+    const {
+      data: { totalHits, hits: images },
+    } = await axios('', config);
 
-      if (this.#isLastPage) {
-        console.log('This is last page. The End!');
-        return data.hits;
-      }
+    this.incrementPage();
 
-      this.incrementPage();
+    this.#totalPages = Math.ceil(totalHits / this.#limit);
+    this.#isLastPage = this.#page > this.#totalPages;
 
-      return data.hits;
-    });
+    return images;
   }
-
-  // fetchImages() {
-  //   const searchParams = new URLSearchParams({
-  //     key: API_KEY,
-  //     q: this.#query,
-  //     page: this.#page,
-  //     per_page: this.limit,
-  //     image_type: 'photo',
-  //     orientation: 'horizontal',
-  //     safesearch: true,
-  //   });
-  //   const url = `${BASE_URL}?${searchParams}`;
-
-  //   return fetch(url)
-  //     .then(resp => {
-  //       if (!resp.ok) {
-  //         throw new Error(`HTTP error: ${resp.status}`);
-  //       }
-
-  //       return resp.json();
-  //     })
-  //     .then(({ hits, totalHits }) => {
-  //       const total = this.#page * this.limit;
-
-  //       if (total >= totalHits) {
-  //         this.isLastPage = true;
-  //       }
-
-  //       this.incrementPage();
-
-  //       return hits;
-  //     });
-  // }
 }
