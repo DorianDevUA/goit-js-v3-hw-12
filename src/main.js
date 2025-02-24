@@ -17,7 +17,7 @@ const messages = {
   endOfSearch: 'Вибачте, але ви досягли кінця результатів пошуку',
 };
 
-const pixabayApi = new PixabayApiService({ limit: 9 });
+const pixabayApi = new PixabayApiService({ limit: 40 });
 const iziToastApi = new IziToastApiService();
 const imageLightbox = new SimpleLightboxServise();
 const loader = new CustomLoader({ selector: '.js-loader', hidden: true });
@@ -63,6 +63,7 @@ async function onSearch(evt) {
   if (images.length) {
     appendGalleryItems(images);
     imageLightbox.initialize();
+    refs.galleryItem = document.querySelector('.js-gallery li');
 
     if (!pixabayApi.isLastPage) {
       observer.observe(obsTarget);
@@ -90,6 +91,15 @@ function onLoadMore(entries) {
 
       imageLightbox.refresh();
       loader.hide();
+
+      // page scrolling
+      const rect = refs.galleryItem.getBoundingClientRect();
+      const translocation = rect.height * 2;
+      window.scrollBy({
+        top: translocation,
+        left: 0,
+        behavior: 'smooth',
+      });
 
       if (!pixabayApi.isLastPage) {
         observer.observe(obsTarget);
