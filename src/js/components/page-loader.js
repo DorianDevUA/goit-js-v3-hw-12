@@ -15,14 +15,10 @@ export default class CustomLoader {
   }
 
   show() {
-    this.refs.loader.hidden = false;
-    this.refs.spinner.classList.remove('is-hidden');
-    this.refs.label.textContent = 'Loading images, please wait';
+    this.refs.loader.classList.remove('visually-hidden');
   }
 
   hide() {
-    this.refs.loader.hidden = true;
-    this.refs.spinner.classList.add('is-hidden');
-    this.refs.label.textContent = '';
+    this.refs.loader.classList.add('visually-hidden');
   }
 }

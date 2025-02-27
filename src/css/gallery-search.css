@@ -1,11 +1,16 @@
+.gallery-search {
+  margin-top: 38px;
+  margin-bottom: 36px;
+}
+
 .gallery-search-form {
   display: flex;
-  gap: 8px;
 }
 
 .gallery-search-input {
   width: 272px;
   height: 40px;
+  margin-right: 8px;
 
   padding-top: 8px;
   padding-right: 16px;

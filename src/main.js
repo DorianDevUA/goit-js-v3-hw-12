@@ -1,10 +1,10 @@
 import './css/style.css';
-import CustomButton from './js/components/custom-button';
+import CustomButton from './js/components/search-button';
 import PixabayApiService from './js/pixabay-api';
 import SimpleLightboxServise from './js/utils/simple-lightbox';
 import IziToastApiService from './js/utils/iziToast-api';
 import { appendGalleryItems, clearGallery } from './js/render-functions';
-import CustomLoader from './js/components/custom-loader';
+import CustomLoader from './js/components/page-loader';
 
 const refs = {
   searchForm: document.querySelector('.js-gallery-search-form'),
@@ -24,8 +24,7 @@ const loader = new CustomLoader({ selector: '.js-loader', hidden: true });
 
 const observer = new IntersectionObserver(onLoadMore, {
   root: null,
-  rootMargin: '500px',
-  // threshold: 1.0,
+  rootMargin: '300px',
 });
 
 const obsTarget = refs.galleryObserverGuard;
@@ -58,20 +57,24 @@ async function onSearch(evt) {
   loader.show();
   pixabayApi.searchQuery = searchQuery;
 
-  const images = await pixabayApi.fetchImages();
+  try {
+    const images = await pixabayApi.fetchImages();
 
-  if (images.length) {
-    appendGalleryItems(images);
-    imageLightbox.initialize();
-    refs.galleryItem = document.querySelector('.js-gallery li');
+    if (images.length) {
+      appendGalleryItems(images);
+      imageLightbox.initialize();
+      refs.galleryItem = document.querySelector('.js-gallery li');
 
-    if (!pixabayApi.isLastPage) {
-      observer.observe(obsTarget);
+      if (!pixabayApi.isLastPage) {
+        observer.observe(obsTarget);
+      } else {
+        iziToastApi.showInfoMsg(messages.endOfSearch);
+      }
     } else {
-      iziToastApi.showInfoMsg(messages.endOfSearch);
+      iziToastApi.showErrorMsg(messages.notFound);
     }
-  } else {
-    iziToastApi.showErrorMsg(messages.notFound);
+  } catch (error) {
+    errorHandler(error.message);
   }
 
   loader.hide();
@@ -86,26 +89,31 @@ function onLoadMore(entries) {
       observer.unobserve(obsTarget);
       loader.show();
 
-      const images = await pixabayApi.fetchImages();
-      appendGalleryItems(images);
+      try {
+        const images = await pixabayApi.fetchImages();
+        appendGalleryItems(images);
+        imageLightbox.refresh();
 
-      imageLightbox.refresh();
-      loader.hide();
+        // page scrolling
+        const { height: cardHeight } = refs.galleryItem.getBoundingClientRect();
+        window.scrollBy({
+          top: cardHeight * 2,
+          behavior: 'smooth',
+        });
 
-      // page scrolling
-      const rect = refs.galleryItem.getBoundingClientRect();
-      const translocation = rect.height * 2;
-      window.scrollBy({
-        top: translocation,
-        left: 0,
-        behavior: 'smooth',
-      });
-
-      if (!pixabayApi.isLastPage) {
-        observer.observe(obsTarget);
-      } else {
-        iziToastApi.showInfoMsg(messages.endOfSearch);
+        if (!pixabayApi.isLastPage) {
+          observer.observe(obsTarget);
+        } else {
+          iziToastApi.showInfoMsg(messages.endOfSearch);
+        }
+      } catch (error) {
+        errorHandler(error.message);
       }
+      loader.hide();
     }
   });
+}
+
+function errorHandler(message) {
+  throw new Error(message);
 }

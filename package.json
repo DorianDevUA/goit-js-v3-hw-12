@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "izitoast": "^1.4.0",
+    "only-scrollbar": "^1.1.0",
     "simplelightbox": "^2.14.3"
   }
 }

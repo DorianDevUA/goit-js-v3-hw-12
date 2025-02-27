@@ -9,8 +9,7 @@
 @import url('./common.css');
 @import url('./container.css');
 @import url('./visually-hidden.css');
-@import url('./custom-button.css');
-@import url('./loader.css');
+
 /* @import url('./animations.css'); */
 
 /* Pages style */
@@ -20,7 +19,9 @@
 
 /* Sections style */
 @import url('./gallery-search.css');
+@import url('./search-button.css');
 @import url('./gallery.css');
+@import url('./page-loader.css');
 
 /* @import url('./header.css'); */
 /* @import url('./back-link.css'); */

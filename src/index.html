@@ -8,12 +8,13 @@
   <body>
     <div class="container">
       <load src="./partials/gallery-search.html" />
-      <ul class="gallery js-gallery"></ul>
-      <div class="loader js-loader">
-        <span class="spinner"></span>
-        <span class="label"></span>
+
+      <div class="gallery js-gallery">
+        <ul class="gallery-list"></ul>
+        <div class="js-guard-gallery"></div>
       </div>
-      <div class="js-guard-gallery"></div>
+
+      <load src="./partials/page-loader.html" />
     </div>
     <script type="module" src="./main.js"></script>
   </body>
