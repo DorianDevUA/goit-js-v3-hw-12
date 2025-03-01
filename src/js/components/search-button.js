@@ -1,8 +1,6 @@
-export default class CustomButton {
-  constructor({ selector, enabledLabel, disabledLabel, hidden = false }) {
+export default class SearchButton {
+  constructor({ selector, hidden = false }) {
     this.refs = this.getRefs(selector);
-    this.enabledLabel = enabledLabel;
-    this.disabledLabel = disabledLabel;
 
     hidden && this.hide();
   }
@@ -10,21 +8,21 @@ export default class CustomButton {
   getRefs(selector) {
     const refs = {};
     refs.button = document.querySelector(selector);
-    refs.label = refs.button.querySelector('.custom-btn-label');
-    refs.spinner = refs.button.querySelector('.custom-btn-spinner');
+    refs.label = refs.button.querySelector('.search-btn-label');
+    refs.spinner = refs.button.querySelector('.search-btn-spinner');
 
     return refs;
   }
 
   enable() {
     this.refs.button.disabled = false;
-    this.refs.label.textContent = this.enabledLabel;
+    this.refs.label.textContent = 'Знайти';
     this.refs.spinner.classList.add('is-hidden');
   }
 
   disable() {
     this.refs.button.disabled = true;
-    this.refs.label.textContent = this.disabledLabel;
+    this.refs.label.textContent = 'Пошук';
     this.refs.spinner.classList.remove('is-hidden');
   }
 

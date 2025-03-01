@@ -1,4 +1,4 @@
-.custom-btn {
+.search-btn {
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -19,20 +19,20 @@
   border: none;
 }
 
-.custom-btn:hover {
+.search-btn:hover {
   cursor: pointer;
   background-color: #6C8CFF;
 }
 
-.custom-btn:disabled {
+.search-btn:disabled {
   background-color: #6275b9;
 }
 
-.custom-btn.is-hidden {
+.search-btn.is-hidden {
   display: none;
 }
 
-.custom-btn-spinner {
+.search-btn-spinner {
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -53,6 +53,6 @@
   }
 }
 
-.custom-btn-spinner.is-hidden {
+.search-btn-spinner.is-hidden {
   display: none;
 }

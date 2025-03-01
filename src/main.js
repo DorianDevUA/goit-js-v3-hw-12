@@ -1,5 +1,5 @@
 import './css/style.css';
-import CustomButton from './js/components/search-button';
+import SearchButton from './js/components/search-button';
 import PixabayApiService from './js/pixabay-api';
 import SimpleLightboxServise from './js/utils/simple-lightbox';
 import IziToastApiService from './js/utils/iziToast-api';
@@ -29,7 +29,7 @@ const observer = new IntersectionObserver(onLoadMore, {
 
 const obsTarget = refs.galleryObserverGuard;
 
-const gallerySearchBtn = new CustomButton({
+const gallerySearchBtn = new SearchButton({
   selector: '.js-gallery-search-btn',
   enabledLabel: 'Знайти',
   disabledLabel: 'Пошук',
