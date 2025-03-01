@@ -18,6 +18,8 @@ export default class SimpleLightboxServise {
   }
 
   refresh() {
-    this.lightbox.refresh();
+    if (this.lightbox) {
+      this.lightbox.refresh();
+    }
   }
 }

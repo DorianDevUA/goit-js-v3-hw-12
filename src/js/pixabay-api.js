@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_KEY = '43520057-d4110ce2722b475a1deefaa82';
-axios.defaults.baseURL = 'https://pixabay.com/api/';
+axios.defaults.baseURL = 'https://pixabay.com/api';
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 export default class PixabayApiService {
@@ -40,7 +40,6 @@ export default class PixabayApiService {
   }
 
   reset() {
-    this.#query = '';
     this.#page = 1;
     this.#totalPages = 1;
     this.#isLastPage = false;
@@ -62,7 +61,7 @@ export default class PixabayApiService {
 
     const {
       data: { totalHits, hits: images },
-    } = await axios('', config);
+    } = await axios('/', config);
 
     this.incrementPage();
 

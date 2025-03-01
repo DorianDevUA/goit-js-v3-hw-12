@@ -74,7 +74,7 @@ async function onSearch(evt) {
       iziToastApi.showErrorMsg(messages.notFound);
     }
   } catch (error) {
-    errorHandler(error.message);
+    console.log(error.message);
   }
 
   loader.hide();
@@ -107,13 +107,9 @@ function onLoadMore(entries) {
           iziToastApi.showInfoMsg(messages.endOfSearch);
         }
       } catch (error) {
-        errorHandler(error.message);
+        console.log(error.message);
       }
       loader.hide();
     }
   });
-}
-
-function errorHandler(message) {
-  throw new Error(message);
 }

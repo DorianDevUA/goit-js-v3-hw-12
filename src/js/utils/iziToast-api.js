@@ -27,28 +27,3 @@ export default class IziToastApiService {
     });
   }
 }
-
-function showWarningMsg(message) {
-  iziToast.warning({
-    position: 'topRight',
-    // title: 'Увага!',
-    message,
-  });
-}
-
-function showErrorMsg(message) {
-  iziToast.error({
-    position: 'topRight',
-    // title: 'Помилка!',
-    message,
-  });
-}
-
-function showInfoMsg(message) {
-  iziToast.info({
-    position: 'topRight',
-    message,
-  });
-}
-
-// export default { showWarningMsg, showErrorMsg, showInfoMsg, MESSAGES };
