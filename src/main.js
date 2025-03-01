@@ -4,7 +4,7 @@ import PixabayApiService from './js/pixabay-api';
 import SimpleLightboxServise from './js/utils/simple-lightbox';
 import IziToastApiService from './js/utils/iziToast-api';
 import { appendGalleryItems, clearGallery } from './js/render-functions';
-import CustomLoader from './js/components/page-loader';
+import PageLoader from './js/components/page-loader';
 
 const refs = {
   searchForm: document.querySelector('.js-gallery-search-form'),
@@ -20,7 +20,7 @@ const messages = {
 const pixabayApi = new PixabayApiService({ limit: 40 });
 const iziToastApi = new IziToastApiService();
 const imageLightbox = new SimpleLightboxServise();
-const loader = new CustomLoader({ selector: '.js-loader', hidden: true });
+const loader = new PageLoader({ selector: '.js-loader', hidden: true });
 
 const observer = new IntersectionObserver(onLoadMore, {
   root: null,
@@ -31,8 +31,6 @@ const obsTarget = refs.galleryObserverGuard;
 
 const gallerySearchBtn = new SearchButton({
   selector: '.js-gallery-search-btn',
-  enabledLabel: 'Знайти',
-  disabledLabel: 'Пошук',
   hidden: false,
 });
 gallerySearchBtn.enable();

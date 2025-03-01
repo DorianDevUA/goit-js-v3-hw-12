@@ -1,4 +1,4 @@
-export default class CustomLoader {
+export default class PageLoader {
   constructor({ selector, hidden = false }) {
     this.refs = this.getRefs(selector);
 
